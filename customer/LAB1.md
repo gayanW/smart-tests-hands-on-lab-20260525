@@ -84,17 +84,15 @@ smart-tests subset file \
 
 **Verify:** You should see a similar table as in Step 1 with subset details.
 
-## Step 5: Compare impact on test rankings
+## Step 5: Analyze impact on test rankings
 
-Compare the baseline ranking to the post-change ranking.
+Analyze the subset to verify that PTS prioritized the right tests based on file changes.
 
 ```bash
-smart-tests compare subsets \
-  --subset-id-before <SUBSET_ID_1> \
-  --subset-id-after <SUBSET_ID_2>
+smart-tests analyze subset <SUBSET_ID_2>
 ```
 
-**Verify:** The command displays the rank of every test in both subsets and highlights the differences.
+**Verify:** After selecting expected tests, the command should display a summary indicating the effectiveness of PTS.
 
 ---
 

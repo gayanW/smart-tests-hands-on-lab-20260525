@@ -62,30 +62,60 @@ A "build" in Smart Tests = a snapshot of the code state (commit SHAs from all re
 ### Why `--use-case one-commit`?
 Tells Smart Tests' AI to optimize for "short-lived branch" scenario (vs. long-running feature branches or main branch testing).
 
-## Step 5: Compare impact on test rankings
+## Step 5: Analyze impact on test rankings
 
 ### What's happening
-Shows side-by-side comparison of test rankings before and after the code change.
+The `analyze subset` command provides an **interactive analysis** of PTS effectiveness:
+1. Shows which code files were modified
+2. Prompts customer to select which tests they expected PTS to prioritize (interactive fuzzy search)
+3. Displays an effectiveness summary
 
-### How to evaluate PTS performance
+### How to guide the customer
 
-Guide customers through this checklist:
+**Step 1: Show modified files**
+The command displays which files changed. This helps confirm PTS analyzed the right code changes.
 
-**1. Spot-check expected impacted tests (3-5 tests)**
-- Reference the 3-5 tests they identified in Step 2
-- For each test, check:
-  - **After subset rank**: Did it land reasonably high (e.g., top ~50%)?
-  - **Rank movement**: Did it move UP compared to baseline?
+**Step 2: Interactive test selection**
+- Customer sees a fuzzy-searchable list of all tests
+- They select the 1-2 tests that they expected to be prioritized
+- Use Tab/Space to toggle selection, Enter to confirm
 
-**2. Sanity-check the top of the list (~10 tests)**
-- Look at the highest-ranked tests in "after subset"
-- Ask: "Do these tests look related to the files/areas you changed?"
-- Check by: test name, folder structure, module, feature area
+**Step 3: Review effectiveness summary**
+After selecting expected tests, the command will show one or more of these sections:
+
+- **✅ Tests Promoted**: Expected tests that moved up significantly (e.g., "promoted by 42 positions to rank #1")
+  - Shows how much each test moved UP in ranking
+  - This is the "flashiest" metric - clear evidence PTS is working
+
+- **✅ Tests Prioritized**: Expected tests in top 50%
+  - Shows which expected tests landed in top half of rankings
+  - Indicates PTS understood the impact area
+
+- **✅ Test Selection**: High-confidence picks (density > 0.6)
+  - Density measures correlation strength between code change and test
+  - 0.8+ = very strong, 0.7+ = strong, 0.6+ = moderate
+  - Shows PTS has strong signal for these tests
 
 ### Success criteria
-- Impacted tests should show meaningful upward movement
-- Top-ranked tests should be plausibly related to the change
-- If both are true → PTS is working well for their codebase
+**Strong signal (ideal):**
+- Expected tests show promotion (moved up significantly)
+- Expected tests in top 50%
+- High density scores (0.7+)
+
+**Moderate signal:**
+- Expected tests in top 50% but minimal promotion
+- Density scores 0.6-0.7
+
+**Weak signal:**
+- Expected tests not in top 50%
+- Low/no promotion
+- Low density scores
+
+### What if expected tests aren't prioritized?
+
+The command will offer **AI-powered suggestions**:
+- Suggests tests that clearly relate to the changed files
+- Customer can select a suggestion to see its effectiveness summary
 
 ### What if results are poor?
 - Check: Was the code change too broad or cross-cutting?
